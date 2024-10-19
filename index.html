@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quotes</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="main">
+      <h1>Enter Quotes You Would like to remember</h1>
+      <label for="quotes" id="">Quote:</label>
+      <input type="text" name="quotes" id="qts" class="inp" />
+      <label for="authors" id="">Author</label>
+      <input type="text" name="authors" class="inp" id="aut" />
+      <button class="addButton">Add</button>
+    </div>
+    <ul class="list"></ul>
+    <script>
+      let listQuote = document.querySelector(".list");
+      let btn = document.querySelector(".addButton");
+      if (localStorage.length != 0) {
+        onload();
+      }
+
+      btn.addEventListener("click", () => {
+        let quote = document.querySelector("#qts").value.trim();
+        let author = document.querySelector("#aut").value;
+        let i = 0;
+        let len = localStorage.length;
+
+        if (len > 0) {
+          i = len;
+        }
+        if (len === 0) {
+          i = 0;
+        }
+        if (quote !== "" && author !== "") {
+          i++;
+
+          let list = document.createElement("li");
+
+          let removeBtn = document.createElement("button");
+          removeBtn.classList.add("removeBtn");
+          removeBtn.textContent = "Remove";
+          removeBtn.dataset.num = `${i}`;
+          list.textContent = `${quote} ~ ${author}`;
+          list.appendChild(removeBtn);
+
+          listQuote.appendChild(list);
+
+          document.querySelector("#qts").value = "";
+          document.querySelector("#aut").value = "";
+          removeBtn.addEventListener("click", () => {
+            let num = removeBtn.dataset.num;
+            console.log(num);
+            localStorage.removeItem(`data${num}`);
+
+            list.remove();
+          });
+          let quotes = {
+            quotetext: quote,
+            author: author,
+          };
+
+          console.log(quotes);
+          localStorage.setItem(`data${i}`, JSON.stringify(quotes));
+        }
+      });
+      function addList(quote, author, i) {
+        let list = document.createElement("li");
+        let removeBtn = document.createElement("button");
+        removeBtn.classList.add("removeBtn");
+        removeBtn.textContent = "Remove";
+        list.textContent = `${quote} ~ ${author}`;
+        list.appendChild(removeBtn);
+        removeBtn.dataset.num = `${i}`;
+
+        listQuote.appendChild(list);
+        removeBtn.addEventListener("click", () => {
+          let num = removeBtn.dataset.num;
+
+          localStorage.removeItem(`data${num}`);
+
+          list.remove();
+        });
+      }
+      function onload() {
+        for (let i = 1; i <= localStorage.length; i++) {
+          let saved = JSON.parse(localStorage.getItem(`data${i}`));
+          if (saved !== null) {
+            addList(saved.quotetext, saved.author, i);
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
